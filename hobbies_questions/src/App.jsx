@@ -69,7 +69,7 @@ function App() {
 
   return (
     <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
-      <h2>Creative Hobbies Poll</h2>
+      <h2>My Creative Hobbies Poll</h2>
       <form onSubmit={handleSubmit}>
         <input name="name" placeholder="Your Name" value={form.name} onChange={handleChange} required />
         <br /><br />
