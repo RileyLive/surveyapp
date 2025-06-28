@@ -78,8 +78,8 @@ function App() {
 
       {submissions.length > 0 && (
         <ul style={{ marginTop: '1rem' }}>
-          {submissions.map((entry) => (
-            <li key={entry.id}>
+          {submissions.map((entry, index) => (
+            <li key={index}>
               <strong>{entry.name}</strong> loves <em>{entry.hobby}</em> — "{entry.inspiration}"
             </li>
           ))}
