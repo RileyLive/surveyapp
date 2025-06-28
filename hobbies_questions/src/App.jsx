@@ -12,7 +12,7 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('https://your-railway-url.up.railway.app/api/entries', {
+      const res = await fetch('https://hobbies-backend-env.eba-ecbytrzk.ap-southeast-2.elasticbeanstalk.com/api/entries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
@@ -32,7 +32,7 @@ function App() {
 
   const fetchSubmissions = async () => {
     try {
-      const res = await fetch('https://your-railway-url.up.railway.app/api/entries');
+      const res = await fetch('https://hobbies-backend-env.eba-ecbytrzk.ap-southeast-2.elasticbeanstalk.com/api/entries');
       const json = await res.json();
       setSubmissions(json);
     } catch (err) {
