@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 // Elastic Beanstalk backend URL
-const API_BASE_URL = "http://hobbies-backend-env.eba-ecbytrzk.ap-southeast-2.elasticbeanstalk.com";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function App() {
   const [form, setForm] = useState({ name: '', age: '', hobby: '', inspiration: '' });
