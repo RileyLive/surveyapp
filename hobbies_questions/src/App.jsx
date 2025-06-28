@@ -15,7 +15,7 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${API_BASE_URL}/api/entries`, {
+      const res = await fetch(`${API_BASE_URL}/entries`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
@@ -35,7 +35,7 @@ function App() {
 
   const fetchSubmissions = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/entries`);
+      const res = await fetch(`${API_BASE_URL}/entries`);
       const json = await res.json();
       setSubmissions(json);
     } catch (err) {
