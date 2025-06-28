@@ -11,22 +11,11 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const graphqlQuery = {
-      query: `
-        mutation {
-          submitHobby(name: "${form.name}", hobby: "${form.hobby}", inspiration: "${form.inspiration}") {
-            name
-          }
-        }
-      `,
-    };
-
     try {
-      const res = await fetch('http://127.0.0.1:8000/graphql', {
+      const res = await fetch('https://your-railway-url.up.railway.app/api/entries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(graphqlQuery),
+        body: JSON.stringify(form),
       });
 
       if (res.ok) {
@@ -36,34 +25,18 @@ function App() {
         setMessage('Failed to submit.');
       }
     } catch (err) {
+      console.error(err);
       setMessage('Could not connect to server.');
     }
   };
 
   const fetchSubmissions = async () => {
-    const graphqlQuery = {
-      query: `
-        query {
-          getHobbies {
-            name
-            hobby
-            inspiration
-          }
-        }
-      `,
-    };
-
     try {
-      const res = await fetch('http://127.0.0.1:8000/graphql', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(graphqlQuery),
-      });
-
+      const res = await fetch('https://your-railway-url.up.railway.app/api/entries');
       const json = await res.json();
-      setSubmissions(json.data.getHobbies);
+      setSubmissions(json);
     } catch (err) {
-      console.error("Error loading data:", err);
+      console.error('Error loading data:', err);
     }
   };
 
@@ -71,11 +44,29 @@ function App() {
     <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
       <h2>My Creative Hobbies Poll</h2>
       <form onSubmit={handleSubmit}>
-        <input name="name" placeholder="Your Name" value={form.name} onChange={handleChange} required />
+        <input
+          name="name"
+          placeholder="Your Name"
+          value={form.name}
+          onChange={handleChange}
+          required
+        />
         <br /><br />
-        <input name="hobby" placeholder="Favorite Creative Hobby" value={form.hobby} onChange={handleChange} required />
+        <input
+          name="hobby"
+          placeholder="Favorite Creative Hobby"
+          value={form.hobby}
+          onChange={handleChange}
+          required
+        />
         <br /><br />
-        <textarea name="inspiration" placeholder="What inspires you?" value={form.inspiration} onChange={handleChange} required />
+        <textarea
+          name="inspiration"
+          placeholder="What inspires you?"
+          value={form.inspiration}
+          onChange={handleChange}
+          required
+        />
         <br /><br />
         <button type="submit">Submit</button>
       </form>
@@ -87,9 +78,9 @@ function App() {
 
       {submissions.length > 0 && (
         <ul style={{ marginTop: '1rem' }}>
-          {submissions.map((entry, index) => (
-            <li key={index}>
-              <strong>{entry.name}</strong>: loves <em>{entry.hobby}</em> — "{entry.inspiration}"
+          {submissions.map((entry) => (
+            <li key={entry.id}>
+              <strong>{entry.name}</strong> loves <em>{entry.hobby}</em> — "{entry.inspiration}"
             </li>
           ))}
         </ul>
@@ -99,5 +90,3 @@ function App() {
 }
 
 export default App;
-
-
