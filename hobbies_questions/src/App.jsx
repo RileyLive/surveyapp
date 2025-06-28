@@ -12,7 +12,7 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://hobbies-backend-env.eba-ecbytrzk.ap-southeast-2.elasticbeanstalk.com/api/entries', {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/entries`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
@@ -32,7 +32,7 @@ function App() {
 
   const fetchSubmissions = async () => {
     try {
-      const res = await fetch('http://hobbies-backend-env.eba-ecbytrzk.ap-southeast-2.elasticbeanstalk.com/api/entries');
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/entries`);
       const json = await res.json();
       setSubmissions(json);
     } catch (err) {
@@ -42,7 +42,7 @@ function App() {
 
   return (
     <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
-      <h2>My Creative Hobbies Poll (With Age)</h2>
+      <h2>My Creative Hobbies Poll</h2>
       <form onSubmit={handleSubmit}>
         <input
           name="name"
