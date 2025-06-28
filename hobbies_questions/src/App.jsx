@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 function App() {
-  const [form, setForm] = useState({ name: '', hobby: '', inspiration: '' });
+  const [form, setForm] = useState({ name: '', age: '', hobby: '', inspiration: '' });
   const [message, setMessage] = useState('');
   const [submissions, setSubmissions] = useState([]);
 
@@ -20,7 +20,7 @@ function App() {
 
       if (res.ok) {
         setMessage('Submission received!');
-        setForm({ name: '', hobby: '', inspiration: '' });
+        setForm({ name: '', age: '', hobby: '', inspiration: '' });
       } else {
         setMessage('Failed to submit.');
       }
@@ -42,12 +42,20 @@ function App() {
 
   return (
     <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
-      <h2>My Creative Hobbies Poll</h2>
+      <h2>My Creative Hobbies Poll (With Age)</h2>
       <form onSubmit={handleSubmit}>
         <input
           name="name"
           placeholder="Your Name"
           value={form.name}
+          onChange={handleChange}
+          required
+        />
+        <br /><br />
+        <input
+          name="age"
+          placeholder="Your Age"
+          value={form.age}
           onChange={handleChange}
           required
         />
@@ -80,7 +88,7 @@ function App() {
         <ul style={{ marginTop: '1rem' }}>
           {submissions.map((entry, index) => (
             <li key={index}>
-              <strong>{entry.name}</strong> loves <em>{entry.hobby}</em> — "{entry.inspiration}"
+              <strong>{entry.name}</strong> (Age: {entry.age ?? 'N/A'}) loves <em>{entry.hobby}</em> — "{entry.inspiration}"
             </li>
           ))}
         </ul>
