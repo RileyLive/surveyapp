@@ -1,7 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-import strawberry
-from strawberry.fastapi import GraphQLRouter
+from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import sessionmaker, declarative_base
 
@@ -11,7 +10,6 @@ engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
 
-# SQLAlchemy model
 class HobbyModel(Base):
     __tablename__ = "hobbies"
     id = Column(Integer, primary_key=True, index=True)
@@ -21,50 +19,44 @@ class HobbyModel(Base):
 
 Base.metadata.create_all(bind=engine)
 
-# GraphQL type
-@strawberry.type
-class HobbyEntry:
+# Pydantic schema
+class HobbyEntry(BaseModel):
     name: str
     hobby: str
     inspiration: str
-
-# GraphQL Query
-@strawberry.type
-class Query:
-    @strawberry.field
-    def get_hobbies(self) -> list[HobbyEntry]:
-        db = SessionLocal()
-        hobbies = db.query(HobbyModel).all()
-        db.close()
-        return [HobbyEntry(name=h.name, hobby=h.hobby, inspiration=h.inspiration) for h in hobbies]
-
-# GraphQL Mutation
-@strawberry.type
-class Mutation:
-    @strawberry.mutation
-    def submit_hobby(self, name: str, hobby: str, inspiration: str) -> HobbyEntry:
-        db = SessionLocal()
-        entry = HobbyModel(name=name, hobby=hobby, inspiration=inspiration)
-        db.add(entry)
-        db.commit()
-        db.refresh(entry)
-        db.close()
-        return HobbyEntry(name=entry.name, hobby=entry.hobby, inspiration=entry.inspiration)
-
-# Strawberry schema and app setup
-schema = strawberry.Schema(query=Query, mutation=Mutation)
-graphql_app = GraphQLRouter(schema)
 
 app = FastAPI()
 
 # Allow frontend access
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["*"],  # For testing, you can later restrict to your Amplify URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# GraphQL endpoint
-app.include_router(graphql_app, prefix="/graphql")
+@app.get("/api/entries")
+def get_entries():
+    db = SessionLocal()
+    entries = db.query(HobbyModel).all()
+    db.close()
+    return [
+        {
+            "id": entry.id,
+            "name": entry.name,
+            "hobby": entry.hobby,
+            "inspiration": entry.inspiration
+        }
+        for entry in entries
+    ]
+
+@app.post("/api/entries")
+def create_entry(entry: HobbyEntry):
+    db = SessionLocal()
+    db_entry = HobbyModel(name=entry.name, hobby=entry.hobby, inspiration=entry.inspiration)
+    db.add(db_entry)
+    db.commit()
+    db.refresh(db_entry)
+    db.close()
+    return {"message": "Entry created successfully"}
